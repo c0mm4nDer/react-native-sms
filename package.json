@@ -36,5 +36,8 @@
     "type": "git",
     "url": "git://github.com/tkporter/react-native-sms.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.6"
+  }
 }

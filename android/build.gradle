@@ -5,19 +5,19 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:7.0.4'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -32,8 +32,9 @@ repositories {
 
 repositories {
     maven { url 'https://github.com/tkporter/react-native-sms/raw/master/releases/' }
+    google()
 }
 
 dependencies {
-    compile "com.facebook.react:react-native:+"
+    implementation "com.facebook.react:react-native:+"
 }

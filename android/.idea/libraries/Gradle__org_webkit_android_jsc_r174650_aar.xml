@@ -2,7 +2,11 @@
   <library name="Gradle: org.webkit:android-jsc:r174650@aar">
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-jsc-r174650.aar/b76209960e655818f8d9f136e3b36204/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-jsc-r174650.aar/b76209960e655818f8d9f136e3b36204/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/277a44b8f6f40d3363744df15d2ad638/transformed/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d1345cb456d7f136af482ab66eced5eb/transformed/android-jsc-r174650/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/f522d511ca3d3b1c2687a2064635c88f/transformed/android-jsc-r174650/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f522d511ca3d3b1c2687a2064635c88f/transformed/android-jsc-r174650/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f522d511ca3d3b1c2687a2064635c88f/transformed/android-jsc-r174650/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

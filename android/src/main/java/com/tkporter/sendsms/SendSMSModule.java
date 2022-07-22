@@ -1,18 +1,45 @@
 package com.tkporter.sendsms;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+
+import com.facebook.jni.HybridData;
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableNativeMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class SendSMSModule extends ReactContextBaseJavaModule implements ActivityEventListener {
 
@@ -31,7 +58,14 @@ public class SendSMSModule extends ReactContextBaseJavaModule implements Activit
         return "SendSMS";
     }
 
-
+    //    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        //System.out.println("in module onActivityResult() request " + requestCode + " result " + resultCode);
+//        //canceled intent
+//        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_CANCELED) {
+//            sendCallback(false, true, false);
+//        }
+//    }
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         //System.out.println("in module onActivityResult() request " + requestCode + " result " + resultCode);
@@ -51,6 +85,37 @@ public class SendSMSModule extends ReactContextBaseJavaModule implements Activit
             callback.invoke(completed, cancelled, error);
             callback = null;
         }
+    }
+
+    @ReactMethod
+    public void getSims(Promise promise) {
+        WritableMap map = Arguments.createMap();
+        WritableArray array = new WritableNativeArray();
+        if (Build.VERSION.SDK_INT >= 22) {
+            if (ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                promise.resolve(map);
+                return ;
+            }
+            final SubscriptionManager subscriptionManager = SubscriptionManager.from(getReactApplicationContext());
+
+            final List<SubscriptionInfo> activeSubscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+
+
+            for (int i = 0; i < activeSubscriptionInfoList.size(); i++) {
+                WritableMap m =  Arguments.createMap();
+                m.putString("subscriptionId", String.valueOf(activeSubscriptionInfoList.get(i).getSubscriptionId()));
+                m.putString("simSlotIndex", String.valueOf(activeSubscriptionInfoList.get(i).getSimSlotIndex()));
+                m.putString("carrierName", String.valueOf(activeSubscriptionInfoList.get(i).getCarrierName()));
+                m.putString("displayName", String.valueOf(activeSubscriptionInfoList.get(i).getDisplayName()));
+                array.pushMap(m);
+            }
+            map.putArray("SIMs", array);
+
+            Log.i("tag",  map.toString());
+//            simCount = activeSubscriptionInfoList.size();
+        }
+//        Log.d("TAG", "getSims:"+ simCount);
+        promise.resolve(map);
     }
 
     @ReactMethod
@@ -118,13 +183,21 @@ public class SendSMSModule extends ReactContextBaseJavaModule implements Activit
     private void sendDirect(ReadableMap options, Callback callback) {
 
         String msg = options.hasKey("body") ? options.getString("body") : "";
+        int sim = options.hasKey("sim") ? options.getInt("sim") : 0;
+
 
         ReadableArray recipients = options.hasKey("recipients") ? options.getArray("recipients") : null;
         for (int i = 0; i < recipients.size(); i++) {
             String phoneNo = recipients.getString(i);
 
             try {
-                SmsManager smsManager = SmsManager.getDefault();
+                SmsManager smsManager;
+                Log.d("test", String.valueOf(sim));
+                if (Build.VERSION.SDK_INT >= 22 && sim > -1 ) {
+                    smsManager   = SmsManager.getSmsManagerForSubscriptionId(sim);
+                }else{
+                    smsManager = SmsManager.getDefault();
+                }
                 smsManager.sendTextMessage(phoneNo, null, msg, null, null);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -136,4 +209,5 @@ public class SendSMSModule extends ReactContextBaseJavaModule implements Activit
         sendCallback(true, false, false);
 
     }
+
 }
