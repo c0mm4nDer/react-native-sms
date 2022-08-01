@@ -183,7 +183,7 @@ public class SendSMSModule extends ReactContextBaseJavaModule implements Activit
     private void sendDirect(ReadableMap options, Callback callback) {
 
         String msg = options.hasKey("body") ? options.getString("body") : "";
-        int sim = options.hasKey("sim") ? options.getInt("sim") : 0;
+        int sim = options.hasKey("sim") ? options.getInt("sim") : -1;
 
 
         ReadableArray recipients = options.hasKey("recipients") ? options.getArray("recipients") : null;
